@@ -9,18 +9,20 @@ body.dark {
   color: #f7fafc;
 }
 
-header, nav {
+header,
+nav {
   background: #fff;
 }
 
-.dark header, .dark nav {
+.dark header,
+.dark nav {
   background: #1a1a1a;
 }
 
 #menu {
   display: none;
   position: absolute;
-  top:  0;
+  top: 0;
   right: 0;
   bottom: 0;
   left: 0;
@@ -29,7 +31,7 @@ header, nav {
 
 @media only screen and (min-width: 768px) {
   #menu {
-    display:block;
+    display: block;
     position: unset;
     height: unset;
   }
@@ -44,6 +46,7 @@ header, nav {
     object-fit: cover;
     width: 450px;
     height: 350px;
+    cursor: zoom-in;
   }
 }
 
@@ -58,17 +61,64 @@ header, nav {
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  z-index: 1000;
 }
 
-.lightroom img, .lightroom div {
-  width: 50%;
+.lightroom img,
+.lightroom>div {
+  max-width: 90vw;
+  max-height: 90vh;
+  width: auto;
   height: auto;
   background: #fff;
   color: #2d3748;
 }
 
+.lightroom img {
+  cursor: zoom-out;
+  /* smoother zoom */
+  will-change: transform;
+  /* allow panning while zoomed on mobile */
+  touch-action: pan-x pan-y;
+}
+
+
+/* UI container */
+#lr-ui {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  /* buttons re-enable their own pointer-events */
+  pointer-events: none;
+  /* above .lightroom */
+  z-index: 1001;
+}
+
+/* If you prefer CSS (instead of inline styles) on buttons, uncomment:
+#lr-ui button {
+  pointer-events: auto;
+  font-size: 14px;
+  padding: 8px 10px;
+  margin: 8px;
+  background: rgba(0,0,0,.5);
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+}
+*/
+
+/* Prevent accidental selection during navigation/zoom */
+#lr-ui,
+.lightroom img {
+  user-select: none;
+}
+
 @media only screen and (max-width: 767px) {
-  .lightroom img, .lightroom div {
+
+  .lightroom img,
+  .lightroom div {
     width: 90%;
   }
 }
@@ -80,7 +130,38 @@ header, nav {
       position: fixed;
     }
   }
+
   .lightroom {
     position: fixed;
   }
+}
+
+.media-link[data-kind="video"] {
+  position: relative;
+}
+
+.media-link[data-kind="video"]::after {
+  content: "▶";
+  position: absolute;
+  right: .5rem;
+  bottom: .5rem;
+  background: rgba(0, 0, 0, .6);
+  color: #fff;
+  padding: .2rem .4rem;
+  border-radius: .25rem;
+  font-size: .9rem;
+  line-height: 1;
+}
+
+.media-link[data-kind="pdf"]::after {
+  content: "PDF";
+  position: absolute;
+  right: .5rem;
+  bottom: .5rem;
+  background: rgba(0, 0, 0, .6);
+  color: #fff;
+  padding: .2rem .4rem;
+  border-radius: .25rem;
+  font-size: .75rem;
+  line-height: 1;
 }
