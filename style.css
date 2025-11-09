@@ -41,6 +41,19 @@ nav {
   display: block;
 }
 
+/* position the close button */
+#lr-close-area {
+  position: fixed;
+  top: 8px;
+  right: 8px;
+  z-index: 1002;
+  pointer-events: none;
+}
+
+#lr-close-area button {
+  pointer-events: auto;
+}
+
 @media (min-width: 768px) {
   .image-card img {
     object-fit: cover;
@@ -163,6 +176,10 @@ nav {
   border-radius: .25rem;
   font-size: .9rem;
   line-height: 1;
+}
+
+.media-link[data-kind="pdf"] {
+  position: relative;
 }
 
 .media-link[data-kind="pdf"]::after {

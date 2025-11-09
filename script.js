@@ -151,7 +151,13 @@ var toggleTheme = function () {
     // Prev / Next (desktop)
     const prevBtn = mkBtn('←', 'Previous (←)', prevImage);
     const nextBtn = mkBtn('→', 'Next (→)', nextImage);
+
+    // Create a dedicated, fixed top-right layer for Close
     const closeBtn = mkBtn('✕', 'Close (Esc)', closeLightroom);
+    const closeArea = document.createElement('div');
+    closeArea.id = 'lr-close-area';
+    closeBtn.style.pointerEvents = 'auto';
+    closeArea.appendChild(closeBtn);
 
     // Zoom controls (desktop only)
     let zoomRow = null;
@@ -159,25 +165,24 @@ var toggleTheme = function () {
       const zoomInBtn = mkBtn('+', 'Zoom in (+)', () => { zoom = Math.min(zoom * 1.25, 8); applyZoom(); });
       const zoomOutBtn = mkBtn('−', 'Zoom out (−)', () => { zoom = Math.max(zoom / 1.25, 1); applyZoom(); });
       // const zoomResetBtn = mkBtn('⤾', 'Reset zoom (0)', () => { zoom = 1; applyZoom(); });
-      // Right column: zoom controls stacked above next/close
-      const zoomRow = document.createElement('div');
+
+      zoomRow = document.createElement('div');
       zoomRow.style.display = 'flex';
       zoomRow.appendChild(zoomOutBtn);
-      zoomRow.appendChild(zoomResetBtn);
+      // zoomRow.appendChild(zoomResetBtn);
       zoomRow.appendChild(zoomInBtn);
     }
 
     const navRow = document.createElement('div');
     navRow.style.display = 'flex';
     navRow.appendChild(nextBtn);
-    navRow.appendChild(closeBtn);
-
     leftCol.appendChild(prevBtn);
     if (zoomRow) rightCol.appendChild(zoomRow);
     rightCol.appendChild(navRow);
 
     uiRoot.appendChild(leftCol);
     uiRoot.appendChild(rightCol);
+    uiRoot.appendChild(closeArea);
     document.body.appendChild(uiRoot);
   }
 
