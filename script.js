@@ -29,8 +29,12 @@ var toggleTheme = function () {
     return inner || null;
   }
 
+  function getCardFromTarget(t) {
+    return t.closest && t.closest('.image-card');
+  }
+
   function isOpen() {
-    return document.querySelector('.image-card .lightroom') != null;
+    return document.querySelector('.image-card.lightroom') != null;
   }
 
   function openAtIndex(idx) {
@@ -40,9 +44,9 @@ var toggleTheme = function () {
     closeLightroom();
 
     const img = imgs[idx];
-    const inner = getInnerContainerFromTarget(img);
-    if (!inner) return;
-    inner.classList.add('lightroom');
+    const card = getCardFromTarget(img);
+    if (!card) return;
+    card.classList.add('lightroom');
     currentIndex = idx;
     zoom = 1;
     applyZoom();
@@ -51,11 +55,11 @@ var toggleTheme = function () {
   }
 
   function closeLightroom() {
-    const open = document.querySelector('.image-card .lightroom');
+    const open = document.querySelector('.image-card.lightroom');
     if (open) open.classList.remove('lightroom');
-    currentIndex = null;
     zoom = 1;
     applyZoom();
+    currentIndex = null;
     hideUI();
   }
 
@@ -64,25 +68,14 @@ var toggleTheme = function () {
     if (!img) return;
 
     // On touch devices, let the browser handle pinch zoom; don't transform.
-    if (isTouch) {
-      img.style.transform = '';
-      img.style.transformOrigin = '';
-      const inner = getInnerContainerFromTarget(img);
-      if (inner) {
-        inner.style.overflow = '';
-        inner.style.cursor = '';
-      }
-      return;
-    }
-
-    // Desktop: keep JS zoom
+    if (isTouch) { img.style.transform = ''; img.style.transformOrigin = ''; return; }
     img.style.transformOrigin = 'center center';
     img.style.transform = `scale(${zoom})`;
     img.style.transition = 'transform 120ms ease';
-    const inner = getInnerContainerFromTarget(img);
-    if (inner) {
-      inner.style.overflow = zoom > 1 ? 'auto' : '';
-      inner.style.cursor = zoom > 1 ? 'zoom-out' : '';
+    const card = getCardFromTarget(img);
+    if (card) {
+      card.style.overflow = zoom > 1 ? 'auto' : '';
+      card.style.cursor = zoom > 1 ? 'zoom-out' : '';
     }
   }
 
@@ -192,26 +185,25 @@ var toggleTheme = function () {
   // === CLICK HANDLER (open/close) ===
   function onGalleryClick(event) {
     // Ignore clicks on media links (PDF/MOV) so they open normally
-    if (event.target.closest && event.target.closest('.media-link')) return;
-
-    const inner = getInnerContainerFromTarget(event.target);
-    if (!inner) return;
+    if (event.target.closest && event.target.closest('.media-link')) return; // PDFs/videos
+    const card = getCardFromTarget(event.target);
+    if (!card) return;
 
     const imgs = getViewableImages();
-    const clickedImg = event.target.tagName === 'IMG' ? event.target : inner.querySelector('img');
-
-    const alreadyOpen = inner.classList.contains('lightroom');
+    const clickedImg = event.target.tagName === 'IMG' ? event.target : card.querySelector('img');
+    const alreadyOpen = card.classList.contains('lightroom');
 
     if (!alreadyOpen) {
       // Open the clicked card
       const idx = imgs.indexOf(clickedImg);
       if (idx !== -1) openAtIndex(idx);
     } else {
-      if (event.target.tagName === 'IMG' || event.target === inner) {
+      if (event.target.tagName === 'IMG' || event.target === card) {
         closeLightroom();
       }
     }
   }
+
   function onGalleryClickVideo(e) {
     const link = e.target.closest && e.target.closest('.media-link[data-kind="video"]');
     if (!link) return;

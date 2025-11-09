@@ -12,6 +12,8 @@ body.dark {
 header,
 nav {
   background: #fff;
+  z-index: 900;
+  /* higher than cards */
 }
 
 .dark header,
@@ -52,45 +54,6 @@ nav {
 
 #lr-close-area button {
   pointer-events: auto;
-}
-
-@media (min-width: 768px) {
-  .image-card img {
-    object-fit: cover;
-    width: 450px;
-    height: 350px;
-    cursor: zoom-in;
-  }
-}
-
-.lightroom {
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  background: rgba(0, 0, 0, 0.9);
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-}
-
-.lightroom img,
-.lightroom>div {
-  max-width: 90vw;
-  max-height: 90vh;
-  width: auto;
-  height: auto;
-  background: #fff;
-  color: #2d3748;
-}
-
-.lightroom img {
-  cursor: zoom-out;
-  /* smoother zoom */
-  will-change: transform;
 }
 
 @media (pointer: coarse) {
@@ -161,29 +124,67 @@ nav {
   }
 }
 
-.media-link[data-kind="video"] {
+/* Outer shell now carries the visual chrome */
+.image-card {
+  max-width: 24rem;
+  margin: .5rem;
+  /* was on .card */
+  overflow: hidden;
+  /* was on .card */
+  border: 1px solid #cbd5e0;
+  /* gray-400 */
+  border-bottom-left-radius: .375rem;
+  border-bottom-right-radius: .375rem;
+  transition: box-shadow .15s ease;
+}
+
+@media (min-width: 768px) {
+  .image-card {
+    max-width: 28rem;
+  }
+}
+
+.image-card:hover {
+  box-shadow: 0 10px 25px rgba(0, 0, 0, .25);
+}
+
+/* .image-card:hover a,
+.image-card:hover .card__title {
+  text-decoration: underline;
+} */
+
+.image-card img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+@media (min-width: 768px) {
+  .image-card img {
+    object-fit: cover;
+    width: 450px;
+    height: 350px;
+    cursor: zoom-in;
+  }
+}
+
+.card_title {
+  display: block;
+  padding: 1rem 1.5rem;
+  text-align: center;
+  font-weight: 700;
+  font-size: 1rem;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.image-card a.media-link {
   position: relative;
+  display: block;
 }
 
-.media-link[data-kind="video"]::after {
-  content: "▶";
-  position: absolute;
-  right: .5rem;
-  bottom: .5rem;
-  background: rgba(0, 0, 0, .6);
-  color: #fff;
-  padding: .2rem .4rem;
-  border-radius: .25rem;
-  font-size: .9rem;
-  line-height: 1;
-}
-
-.media-link[data-kind="pdf"] {
-  position: relative;
-}
-
-.media-link[data-kind="pdf"]::after {
-  content: "PDF";
+.image-card a.media-link[data-kind="pdf"]::after,
+.image-card a.media-link[data-kind="video"]::after {
   position: absolute;
   right: .5rem;
   bottom: .5rem;
@@ -193,4 +194,59 @@ nav {
   border-radius: .25rem;
   font-size: .75rem;
   line-height: 1;
+  pointer-events: none;
+  content: attr(data-kind);
+}
+
+.image-card a.media-link[data-kind="video"]::after {
+  content: "▶";
+}
+
+.image-card a.media-link[data-kind="pdf"]::after {
+  content: "PDF";
+}
+
+/* .image-card.lightroom,
+.image-card.lightroom img {
+  max-width: 90vw;
+  max-height: 90vh;
+  width: auto;
+  height: auto;
+  background: #fff;
+  color: #2d3748;
+} */
+
+.image-card img {
+  cursor: zoom-in;
+}
+
+.image-card.lightroom {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  max-width: none;
+  max-height: none;
+  margin: 0;
+  border: none;
+  border-radius: 0;
+  background: rgba(0, 0, 0, 0.9);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  overflow: auto;
+  /* always use white text since the background is dark */
+  color: #fff
+}
+
+.image-card.lightroom img {
+  max-width: 90vw;
+  max-height: 90vh;
+  width: auto;
+  height: auto;
+  cursor: zoom-out;
+  /* smoother zoom */
+  will-change: transform;
 }
