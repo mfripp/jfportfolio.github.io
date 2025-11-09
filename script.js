@@ -8,6 +8,35 @@ var toggleTheme = function () {
   const gallery = document.getElementById('works');
   if (!gallery) return;
 
+  /* turn off main-page scrolling when a lightroom is open */
+  let pageScrollY = 0;
+
+  function lockPageScroll() {
+    pageScrollY = window.scrollY || 0;
+    document.documentElement.classList.add('no-scroll');
+    document.body.classList.add('no-scroll');
+
+    /* Robust iOS lock: fix the body in place */
+    document.body.style.position = 'fixed';
+    document.body.style.top = `-${pageScrollY}px`;
+    document.body.style.left = '0';
+    document.body.style.right = '0';
+    document.body.style.width = '100%';
+  }
+
+  function unlockPageScroll() {
+    document.documentElement.classList.remove('no-scroll');
+    document.body.classList.remove('no-scroll');
+
+    document.body.style.position = '';
+    document.body.style.top = '';
+    document.body.style.left = '';
+    document.body.style.right = '';
+    document.body.style.width = '';
+
+    window.scrollTo(0, pageScrollY);
+  }
+
   // Track which image-card is currently enlarged and its index among viewable images.
   let currentIndex = null;
   let zoom = 1;
@@ -15,10 +44,10 @@ var toggleTheme = function () {
   // NodeList of IMG elements that are *enlargeable* (i.e., real images, not inside a media link).
   function getViewableImages() {
     return Array.from(gallery.querySelectorAll('.image-card img')).filter(
-      (img) => !img.closest('a.media-link') // ignore PDFs/MOV thumbnails wrapped in links
+      (img) => !img.closest('a.media-link')   // ignore PDFs/videos wrapped in links
+        && !img.closest('div.popup')          // ignore images inside <div class="popup">
     );
   }
-
   // Find the inner container that gets the .lightroom class in your template
   function getInnerContainerFromTarget(t) {
     // Original structure: .image-card > div > <img> ...
@@ -52,6 +81,7 @@ var toggleTheme = function () {
     applyZoom();
     ensureUI();
     updateUIState();
+    lockPageScroll();
   }
 
   function closeLightroom() {
@@ -61,6 +91,7 @@ var toggleTheme = function () {
     applyZoom();
     currentIndex = null;
     hideUI();
+    unlockPageScroll();
   }
 
   function applyZoom() {
